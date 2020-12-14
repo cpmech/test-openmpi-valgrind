@@ -1,6 +1,6 @@
 # Test OpenMPI with Valgrind
 
-Spoiler alert: it fails.
+Spoiler alert: **it fails**.
 
 Source:
 
@@ -19,6 +19,16 @@ Run test:
 
 ```bash
 bash zscripts/run.bash
+```
+
+or:
+
+```
+mkdir -p build
+cd build
+cmake ..
+make
+valgrind --leak-check=full ./project
 ```
 
 ## Output (Ubuntu GNU/Linux 20.04.1 LTS)
