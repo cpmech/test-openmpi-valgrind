@@ -1,8 +1,8 @@
 #!/bin/bash
 
-mkdir -p build
-cd build
-cmake ..
-make
-valgrind --leak-check=full ./project
+MPIRUN=/usr/bin/mpirun
 
+CC=mpicc CXX=mpicxx cmake -B build
+cd build
+make
+valgrind --leak-check=full $MPIRUN -np 1 ./project
