@@ -1,33 +1,20 @@
 FROM debian:sid
 
-# disable tzdata questions
-ENV DEBIAN_FRONTEND=noninteractive
-
-# use bash
-SHELL ["/bin/bash", "-c"]
-
-# install apt-utils
-RUN apt-get update -y && \
-  apt-get install -y apt-utils 2> >( grep -v 'debconf: delaying package configuration, since apt-utils is not installed' >&2 ) \
-  && apt-get clean && rm -rf /var/lib/apt/lists/*
-
 # tools and libraries
+ENV DEBIAN_FRONTEND=noninteractive
+SHELL ["/bin/bash", "-c"]
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
   ca-certificates \
-  netbase \
-  curl \
   git \
-  vim-tiny \
-  build-essential \
-  python \
-  flex \
+  g++ \
+  make \
   autoconf \
   automake \
   m4 \
   libtool \
-  gcc \
-  libnl-3-dev \
+  flex \
   libnl-route-3-dev \
+  python \
   valgrind \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -40,13 +27,16 @@ RUN ./autogen.pl \
   && ldconfig
 ENV PATH="/usr/local/bin:${PATH}"
 
-# run test
-WORKDIR /tmp
+# prepare test
 RUN echo $'#include <mpi.h> \n\
 int main(int argc, char **argv)\n\
 {\n\
   MPI_Init(&argc, &argv);\n\
   MPI_Finalize();\n\
   return 0;\n\
-}\n' > main.cpp
-RUN /usr/local/bin/mpicc main.cpp -o mytest && valgrind --leak-check=full mpirun -np 1 ./mytest
+}\n' > /tmp/main.cpp
+RUN mpicc -o /tmp/mytest /tmp/main.cpp
+RUN echo "valgrind --leak-check=full mpirun --allow-run-as-root -np 1 /tmp/mytest" > /tmp/test.bash
+
+# command
+CMD [ "bash", "/tmp/test.bash" ]
