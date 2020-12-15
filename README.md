@@ -15,358 +15,273 @@ int main(int argc, char **argv)
 }
 ```
 
-Run test:
+Build Docker image and run Test
 
 ```bash
-bash zscripts/run.bash
+docker build -t test-ompi .
+docker run --rm test-ompi
 ```
 
-or:
+## Output
 
 ```
-mkdir -p build
-cd build
-cmake ..
-make
-valgrind --leak-check=full ./project
-```
+==7== Memcheck, a memory error detector
+==7== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==7== Using Valgrind-3.16.1 and LibVEX; rerun with -h for copyright info
+==7== Command: mpirun --allow-run-as-root -np 1 /tmp/mytest
+==7==
+hwloc x86 backend cannot work under Valgrind, disabling.
+May be reenabled by dumping CPUIDs with hwloc-gather-cpuid
+and reloading them under Valgrind with HWLOC_CPUID_PATH.
+==7== Warning: noted but unhandled ioctl 0x5441 with no size/direction hints.
+==7==    This could cause spurious value errors to appear.
+==7==    See README_MISSING_SYSCALL_OR_IOCTL for guidance on writing a proper wrapper.
+==11== Warning: invalid file descriptor 1048564 in syscall close()
+==11== Warning: invalid file descriptor 1048565 in syscall close()
+==11== Warning: invalid file descriptor 1048566 in syscall close()
+==11== Warning: invalid file descriptor 1048567 in syscall close()
+==11==    Use --log-fd=<number> to select an alternative log fd.
+==11== Warning: invalid file descriptor 1048568 in syscall close()
+==11== Warning: invalid file descriptor 1048569 in syscall close()
+==7==
+==7== HEAP SUMMARY:
+==7==     in use at exit: 427,108 bytes in 4,385 blocks
+==7==   total heap usage: 14,866 allocs, 10,481 frees, 4,016,996 bytes allocated
+==7==
+==7== 6 bytes in 1 blocks are definitely lost in loss record 568 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4D52DEA: strdup (strdup.c:42)
+==7==    by 0x4A81A25: copy (preg_raw.c:115)
+==7==    by 0x4A814D1: pmix_preg_base_copy (preg_base_stubs.c:112)
+==7==    by 0x49E5908: pmix_bfrops_base_value_load (bfrop_base_fns.c:286)
+==7==    by 0x49E4F5B: pmix_value_load (bfrop_base_fns.c:41)
+==7==    by 0x4BF98A3: prte_odls_base_default_get_add_procs_data (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C116AF: prte_plm_base_launch_apps (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x10F546: main (in /usr/local/bin/prte)
+==7==
+==7== 6 bytes in 1 blocks are definitely lost in loss record 569 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4D52DEA: strdup (strdup.c:42)
+==7==    by 0x4A81A25: copy (preg_raw.c:115)
+==7==    by 0x4A814D1: pmix_preg_base_copy (preg_base_stubs.c:112)
+==7==    by 0x49E5908: pmix_bfrops_base_value_load (bfrop_base_fns.c:286)
+==7==    by 0x49E4F5B: pmix_value_load (bfrop_base_fns.c:41)
+==7==    by 0x4B8DB96: prte_pmix_server_register_nspace (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFB10A: prte_odls_base_default_construct_child_list (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFF0F1: prte_odls_default_launch_local_procs (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4B81191: prte_daemon_recv (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C3D990: prte_rml_base_process_msg (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==
+==7== 10 bytes in 1 blocks are definitely lost in loss record 844 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4BA8FB7: prte_dss_unpack_string (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BA7FB4: prte_dss_unpack_buffer (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4B78DE9: prte_dt_unpack_app_context (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BA7FB4: prte_dss_unpack_buffer (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4B77FB8: prte_dt_unpack_job (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BA7FB4: prte_dss_unpack_buffer (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BA8E29: prte_dss_unpack (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C0D102: prte_plm_base_recv (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C3D990: prte_rml_base_process_msg (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==
+==7== 23 bytes in 1 blocks are definitely lost in loss record 1,375 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4D52DEA: strdup (strdup.c:42)
+==7==    by 0x4A839F2: copy (preg_native.c:537)
+==7==    by 0x4A814D1: pmix_preg_base_copy (preg_base_stubs.c:112)
+==7==    by 0x49E5908: pmix_bfrops_base_value_load (bfrop_base_fns.c:286)
+==7==    by 0x49E4F5B: pmix_value_load (bfrop_base_fns.c:41)
+==7==    by 0x4BF97C3: prte_odls_base_default_get_add_procs_data (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C116AF: prte_plm_base_launch_apps (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x10F546: main (in /usr/local/bin/prte)
+==7==
+==7== 23 bytes in 1 blocks are definitely lost in loss record 1,376 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4D52DEA: strdup (strdup.c:42)
+==7==    by 0x4A839F2: copy (preg_native.c:537)
+==7==    by 0x4A814D1: pmix_preg_base_copy (preg_base_stubs.c:112)
+==7==    by 0x49E5908: pmix_bfrops_base_value_load (bfrop_base_fns.c:286)
+==7==    by 0x49E4F5B: pmix_value_load (bfrop_base_fns.c:41)
+==7==    by 0x4B8D9C6: prte_pmix_server_register_nspace (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFB10A: prte_odls_base_default_construct_child_list (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFF0F1: prte_odls_default_launch_local_procs (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4B81191: prte_daemon_recv (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C3D990: prte_rml_base_process_msg (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==
+==7== 29 bytes in 2 blocks are definitely lost in loss record 1,593 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x49E6B76: pmix_bfrops_base_value_xfer (bfrop_base_fns.c:831)
+==7==    by 0x49E4FAE: pmix_value_xfer (bfrop_base_fns.c:54)
+==7==    by 0x4B907BA: prte_pmix_server_register_nspace (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFB10A: prte_odls_base_default_construct_child_list (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFF0F1: prte_odls_default_launch_local_procs (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4B81191: prte_daemon_recv (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C3D990: prte_rml_base_process_msg (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x10F546: main (in /usr/local/bin/prte)
+==7==
+==7== 64 bytes in 1 blocks are definitely lost in loss record 1,981 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4B8F08C: prte_pmix_server_register_nspace (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFB10A: prte_odls_base_default_construct_child_list (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFF0F1: prte_odls_default_launch_local_procs (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4B81191: prte_daemon_recv (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C3D990: prte_rml_base_process_msg (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x10F546: main (in /usr/local/bin/prte)
+==7==
+==7== 66 (32 direct, 34 indirect) bytes in 1 blocks are definitely lost in loss record 1,998 of 2,775
+==7==    at 0x483AD7B: realloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x48F3AB6: pmix_argv_append_nosize (argv.c:78)
+==7==    by 0x48F39E8: pmix_argv_append (argv.c:48)
+==7==    by 0x48F3F24: pmix_argv_split_inter (argv.c:235)
+==7==    by 0x48F4091: pmix_argv_split (argv.c:279)
+==7==    by 0x49E17B4: _store_job_info (dstore_base.c:2751)
+==7==    by 0x49E2709: pmix_common_dstor_register_job_info (dstore_base.c:2892)
+==7==    by 0x4A30A8C: ds21_register_job_info (gds_ds21_base.c:90)
+==7==    by 0x495E2B4: server_switchyard (pmix_server.c:3822)
+==7==    by 0x4962C09: pmix_server_message_handler (pmix_server.c:4134)
+==7==    by 0x4A9C3B5: pmix_ptl_base_process_msg (ptl_base_sendrecv.c:791)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==
+==7== 88 (24 direct, 64 indirect) bytes in 1 blocks are definitely lost in loss record 2,110 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4ED685B: hwloc_bitmap_alloc (bitmap.c:88)
+==7==    by 0x4B8F31D: prte_pmix_server_register_nspace (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFB10A: prte_odls_base_default_construct_child_list (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFF0F1: prte_odls_default_launch_local_procs (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4B81191: prte_daemon_recv (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C3D990: prte_rml_base_process_msg (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x10F546: main (in /usr/local/bin/prte)
+==7==
+==7== 168 bytes in 1 blocks are definitely lost in loss record 2,480 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4C4A1E0: prte_state_base_activate_job_state (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C101FB: prte_plm_base_daemons_reported (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x10F546: main (in /usr/local/bin/prte)
+==7==
+==7== 216 (136 direct, 80 indirect) bytes in 1 blocks are definitely lost in loss record 2,494 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4B92928: interim (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x10F546: main (in /usr/local/bin/prte)
+==7==
+==7== 216 (64 direct, 152 indirect) bytes in 1 blocks are definitely lost in loss record 2,495 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4B77E37: prte_dt_unpack_job (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BA7FB4: prte_dss_unpack_buffer (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BA8E29: prte_dss_unpack (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFA533: prte_odls_base_default_construct_child_list (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BFF0F1: prte_odls_default_launch_local_procs (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4B81191: prte_daemon_recv (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C3D990: prte_rml_base_process_msg (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x10F546: main (in /usr/local/bin/prte)
+==7==
+==7== 240 bytes in 3 blocks are definitely lost in loss record 2,586 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4964211: pmix_obj_new (pmix_object.h:486)
+==7==    by 0x49640B9: pmix_obj_new_debug (pmix_object.h:268)
+==7==    by 0x4966C98: new_tracker (pmix_server_ops.c:513)
+==7==    by 0x496A41E: pmix_server_fence (pmix_server_ops.c:990)
+==7==    by 0x495EEBC: server_switchyard (pmix_server.c:3865)
+==7==    by 0x4962C09: pmix_server_message_handler (pmix_server.c:4134)
+==7==    by 0x4A9C3B5: pmix_ptl_base_process_msg (ptl_base_sendrecv.c:791)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x49911B9: progress_engine (pmix_progress_threads.c:234)
+==7==    by 0x4CABEA6: start_thread (pthread_create.c:477)
+==7==
+==7== 1,392 (616 direct, 776 indirect) bytes in 1 blocks are definitely lost in loss record 2,749 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4BADEAC: prte_convert_nspace_to_jobid (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C16BFA: prte_plm_base_create_jobid (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C10C37: prte_plm_base_setup_job (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x10F546: main (in /usr/local/bin/prte)
+==7==
+==7== 2,048 bytes in 1 blocks are definitely lost in loss record 2,756 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4BA2F1E: prte_dss_buffer_extend (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BA4FE0: prte_dss_pack_int32 (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BA5055: prte_dss_pack (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BCEDB6: prte_util_generate_ppn (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BF94DF: prte_odls_base_default_get_add_procs_data (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4C116AF: prte_plm_base_launch_apps (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x10F546: main (in /usr/local/bin/prte)
+==7==
+==7== 4,957 (184 direct, 4,773 indirect) bytes in 1 blocks are definitely lost in loss record 2,765 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4BE5D46: rte_init (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4B70820: prte_init (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x10CD44: main (in /usr/local/bin/prte)
+==7==
+==7== 29,441 (16 direct, 29,425 indirect) bytes in 1 blocks are definitely lost in loss record 2,772 of 2,775
+==7==    at 0x483AB65: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x49EE2F8: pmix_bfrops_base_copy_topology (bfrop_base_copy.c:1216)
+==7==    by 0x49E6DB4: pmix_bfrops_base_value_xfer (bfrop_base_fns.c:880)
+==7==    by 0x494AFB2: PMIx_Store_internal (pmix_server.c:1862)
+==7==    by 0x49418B6: PMIx_server_init (pmix_server.c:459)
+==7==    by 0x4B888E2: pmix_server_init (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4BE5B7E: rte_init (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x4B70820: prte_init (in /usr/local/lib/libprrte.so.2.0.0)
+==7==    by 0x10CD44: main (in /usr/local/bin/prte)
+==7==
+==7== 98,475 (752 direct, 97,723 indirect) bytes in 1 blocks are definitely lost in loss record 2,775 of 2,775
+==7==    at 0x483877F: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7==    by 0x4A3517A: pmix_obj_new (pmix_object.h:486)
+==7==    by 0x4A35022: pmix_obj_new_debug (pmix_object.h:268)
+==7==    by 0x4A3734E: get_tracker (gds_hash.c:287)
+==7==    by 0x4A4001A: hash_cache_job_info (gds_hash.c:1234)
+==7==    by 0x49431C2: _register_nspace (pmix_server.c:627)
+==7==    by 0x486BCC7: event_process_active_single_queue (event.c:1691)
+==7==    by 0x486C436: event_process_active (event.c:1783)
+==7==    by 0x486C436: event_base_loop (event.c:2006)
+==7==    by 0x49911B9: progress_engine (pmix_progress_threads.c:234)
+==7==    by 0x4CABEA6: start_thread (pthread_create.c:477)
+==7==    by 0x4DC2D8E: clone (clone.S:95)
+==7==
+==7== LEAK SUMMARY:
+==7==    definitely lost: 4,441 bytes in 21 blocks
+==7==    indirectly lost: 133,027 bytes in 786 blocks
+==7==      possibly lost: 0 bytes in 0 blocks
+==7==    still reachable: 289,640 bytes in 3,578 blocks
+==7==         suppressed: 0 bytes in 0 blocks
+==7== Reachable blocks (those to which a pointer was found) are not shown.
+==7== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==7==
+==7== For lists of detected and suppressed errors, rerun with: -s
+==7== ERROR SUMMARY: 18 errors from 18 contexts (suppressed: 0 from 0)
 
-## Output (Ubuntu GNU/Linux 20.04.1 LTS)
-
-```
-==221582== Memcheck, a memory error detector
-==221582== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==221582== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==221582== Command: ./project
-==221582==
-==221582==
-==221582== HEAP SUMMARY:
-==221582==     in use at exit: 11,743 bytes in 71 blocks
-==221582==   total heap usage: 26,871 allocs, 26,800 frees, 5,516,327 bytes allocated
-==221582==
-==221582== 1 bytes in 1 blocks are definitely lost in loss record 1 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x4C4B50E: strdup (strdup.c:42)
-==221582==    by 0x92514B6: ???
-==221582==    by 0x922A373: ???
-==221582==    by 0x4ECEB9B: mca_base_framework_components_register (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x4ECEF35: mca_base_framework_register (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x4ECEF93: mca_base_framework_open (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x4960734: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 8 bytes in 1 blocks are definitely lost in loss record 8 of 58
-==221582==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x928AB6F: ???
-==221582==    by 0x9239DED: ???
-==221582==    by 0x4EE79C8: mca_btl_base_select (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x7389527: ???
-==221582==    by 0x492070A: mca_bml_base_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4960714: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 11 bytes in 1 blocks are definitely lost in loss record 13 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x4C4B50E: strdup (strdup.c:42)
-==221582==    by 0x930855C: ???
-==221582==    by 0x4011B89: call_init.part.0 (dl-init.c:72)
-==221582==    by 0x4011C90: call_init (dl-init.c:30)
-==221582==    by 0x4011C90: _dl_init (dl-init.c:119)
-==221582==    by 0x4D0C914: _dl_catch_exception (dl-error-skeleton.c:182)
-==221582==    by 0x401642C: dl_open_worker (dl-open.c:758)
-==221582==    by 0x4D0C8B7: _dl_catch_exception (dl-error-skeleton.c:208)
-==221582==    by 0x40155F9: _dl_open (dl-open.c:837)
-==221582==    by 0x513D34B: dlopen_doit (dlopen.c:66)
-==221582==    by 0x4D0C8B7: _dl_catch_exception (dl-error-skeleton.c:208)
-==221582==    by 0x4D0C982: _dl_catch_error (dl-error-skeleton.c:227)
-==221582==
-==221582== 16 bytes in 1 blocks are definitely lost in loss record 16 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x9239BEB: ???
-==221582==    by 0x4EE79C8: mca_btl_base_select (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x7389527: ???
-==221582==    by 0x492070A: mca_bml_base_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4960714: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 16 bytes in 1 blocks are definitely lost in loss record 17 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x9239C66: ???
-==221582==    by 0x4EE79C8: mca_btl_base_select (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x7389527: ???
-==221582==    by 0x492070A: mca_bml_base_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4960714: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 16 bytes in 1 blocks are definitely lost in loss record 18 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x9239CDA: ???
-==221582==    by 0x4EE79C8: mca_btl_base_select (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x7389527: ???
-==221582==    by 0x492070A: mca_bml_base_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4960714: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 30 bytes in 1 blocks are definitely lost in loss record 20 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x975F59B: ???
-==221582==    by 0x4011B89: call_init.part.0 (dl-init.c:72)
-==221582==    by 0x4011C90: call_init (dl-init.c:30)
-==221582==    by 0x4011C90: _dl_init (dl-init.c:119)
-==221582==    by 0x4D0C914: _dl_catch_exception (dl-error-skeleton.c:182)
-==221582==    by 0x401642C: dl_open_worker (dl-open.c:758)
-==221582==    by 0x4D0C8B7: _dl_catch_exception (dl-error-skeleton.c:208)
-==221582==    by 0x40155F9: _dl_open (dl-open.c:837)
-==221582==    by 0x513D34B: dlopen_doit (dlopen.c:66)
-==221582==    by 0x4D0C8B7: _dl_catch_exception (dl-error-skeleton.c:208)
-==221582==    by 0x4D0C982: _dl_catch_error (dl-error-skeleton.c:227)
-==221582==    by 0x513DB58: _dlerror_run (dlerror.c:170)
-==221582==
-==221582== 32 bytes in 1 blocks are definitely lost in loss record 22 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x5F673EB: ???
-==221582==    by 0x5F691C1: ???
-==221582==    by 0x5F3A78C: ???
-==221582==    by 0x5E4C05A: ???
-==221582==    by 0x5E4DFE8: ???
-==221582==    by 0x5E4EE4D: ???
-==221582==    by 0x5DDC5EB: ???
-==221582==    by 0x559EEA3: ???
-==221582==    by 0x4E4B2FB: orte_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==    by 0x4960322: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==
-==221582== 32 bytes in 1 blocks are definitely lost in loss record 23 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x5F673EB: ???
-==221582==    by 0x5F691C1: ???
-==221582==    by 0x5F3A78C: ???
-==221582==    by 0x5E4C05A: ???
-==221582==    by 0x5E4DFE8: ???
-==221582==    by 0x5E4EE4D: ???
-==221582==    by 0x5DDC5EB: ???
-==221582==    by 0x559F02F: ???
-==221582==    by 0x4E4B2FB: orte_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==    by 0x4960322: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==
-==221582== 32 bytes in 1 blocks are definitely lost in loss record 24 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x5F673EB: ???
-==221582==    by 0x5F691C1: ???
-==221582==    by 0x5F3A78C: ???
-==221582==    by 0x5E4C05A: ???
-==221582==    by 0x5E4DFE8: ???
-==221582==    by 0x5E4EE4D: ???
-==221582==    by 0x5DDC5EB: ???
-==221582==    by 0x559F0F8: ???
-==221582==    by 0x4E4B2FB: orte_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==    by 0x4960322: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==
-==221582== 34 (32 direct, 2 indirect) bytes in 1 blocks are definitely lost in loss record 27 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x5F4EBD8: ???
-==221582==    by 0x5F56F4B: ???
-==221582==    by 0x5E4AA0D: ???
-==221582==    by 0x5EBD9C1: ???
-==221582==    by 0x5106FDD: ??? (in /usr/lib/x86_64-linux-gnu/libevent-2.1.so.7.0.0)
-==221582==    by 0x510787E: event_base_loop (in /usr/lib/x86_64-linux-gnu/libevent-2.1.so.7.0.0)
-==221582==    by 0x5E83D55: ???
-==221582==    by 0x4DA6608: start_thread (pthread_create.c:477)
-==221582==    by 0x4CCB292: clone (clone.S:95)
-==221582==
-==221582== 40 bytes in 1 blocks are definitely lost in loss record 31 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x746196F: ???
-==221582==    by 0x7460B88: ???
-==221582==    by 0x73EC249: ???
-==221582==    by 0x73C9C0E: ???
-==221582==    by 0x6FB4465: ???
-==221582==    by 0x5099020: ??? (in /usr/lib/x86_64-linux-gnu/libhwloc.so.15.1.0)
-==221582==    by 0x508C478: ??? (in /usr/lib/x86_64-linux-gnu/libhwloc.so.15.1.0)
-==221582==    by 0x4EEFFCF: opal_hwloc_base_get_topology (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x4E14E54: orte_ess_base_proc_binding (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==    by 0x559FEF2: ???
-==221582==    by 0x4E4B2FB: orte_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==
-==221582== 40 bytes in 1 blocks are definitely lost in loss record 32 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x746196F: ???
-==221582==    by 0x7408000: ???
-==221582==    by 0x73EC26A: ???
-==221582==    by 0x73C9C0E: ???
-==221582==    by 0x6FB4465: ???
-==221582==    by 0x5099020: ??? (in /usr/lib/x86_64-linux-gnu/libhwloc.so.15.1.0)
-==221582==    by 0x508C478: ??? (in /usr/lib/x86_64-linux-gnu/libhwloc.so.15.1.0)
-==221582==    by 0x4EEFFCF: opal_hwloc_base_get_topology (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x4E14E54: orte_ess_base_proc_binding (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==    by 0x559FEF2: ???
-==221582==    by 0x4E4B2FB: orte_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==
-==221582== 40 (32 direct, 8 indirect) bytes in 1 blocks are definitely lost in loss record 33 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x5F673EB: ???
-==221582==    by 0x5F691C1: ???
-==221582==    by 0x5F3A78C: ???
-==221582==    by 0x5E4C05A: ???
-==221582==    by 0x5E4DFE8: ???
-==221582==    by 0x5E4EE4D: ???
-==221582==    by 0x5DDC767: ???
-==221582==    by 0x48B5CD6: ompi_comm_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x496094D: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 56 bytes in 1 blocks are definitely lost in loss record 44 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x928F008: ???
-==221582==    by 0x929D654: ???
-==221582==    by 0x9239D3E: ???
-==221582==    by 0x4EE79C8: mca_btl_base_select (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x7389527: ???
-==221582==    by 0x492070A: mca_bml_base_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4960714: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 56 bytes in 1 blocks are definitely lost in loss record 45 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x92F9008: ???
-==221582==    by 0x97D9017: ???
-==221582==    by 0x97D0FD8: ???
-==221582==    by 0x9796E15: ???
-==221582==    by 0x9797624: ???
-==221582==    by 0x92A1910: ???
-==221582==    by 0x4944C53: ompi_mtl_base_select (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x9222E4D: ???
-==221582==    by 0x4953673: mca_pml_base_select (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4960789: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==
-==221582== 79 (64 direct, 15 indirect) bytes in 1 blocks are definitely lost in loss record 47 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x738112E: ???
-==221582==    by 0x4EC48FC: mca_base_framework_components_open (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x4EF2C25: ??? (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x4ECF008: mca_base_framework_open (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x49606D5: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 88 bytes in 1 blocks are definitely lost in loss record 48 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x517DA8C: lt__malloc (in /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.1)
-==221582==    by 0x517DABD: lt__zalloc (in /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.1)
-==221582==    by 0x517FD09: ??? (in /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.1)
-==221582==    by 0x5180636: lt_dlopenadvise (in /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.1)
-==221582==    by 0x6F897C9: ???
-==221582==    by 0x508B6D0: ??? (in /usr/lib/x86_64-linux-gnu/libhwloc.so.15.1.0)
-==221582==    by 0x5082A4C: ??? (in /usr/lib/x86_64-linux-gnu/libhwloc.so.15.1.0)
-==221582==    by 0x4EEFFAB: opal_hwloc_base_get_topology (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x4E14E54: orte_ess_base_proc_binding (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==    by 0x559FEF2: ???
-==221582==    by 0x4E4B2FB: orte_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==
-==221582== 88 (24 direct, 64 indirect) bytes in 1 blocks are definitely lost in loss record 49 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x508DF8F: hwloc_bitmap_alloc (in /usr/lib/x86_64-linux-gnu/libhwloc.so.15.1.0)
-==221582==    by 0x4E150C9: orte_ess_base_proc_binding (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==    by 0x559FEF2: ???
-==221582==    by 0x4E4B2FB: orte_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==    by 0x4960322: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 104 bytes in 1 blocks are definitely lost in loss record 50 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x7461A3F: ???
-==221582==    by 0x74CC1C4: ???
-==221582==    by 0x4DAF47E: __pthread_once_slow (pthread_once.c:116)
-==221582==    by 0x7461D33: ???
-==221582==    by 0x746130C: ???
-==221582==    by 0x73EC24E: ???
-==221582==    by 0x73C9C0E: ???
-==221582==    by 0x6FB4465: ???
-==221582==    by 0x5099020: ??? (in /usr/lib/x86_64-linux-gnu/libhwloc.so.15.1.0)
-==221582==    by 0x508C478: ??? (in /usr/lib/x86_64-linux-gnu/libhwloc.so.15.1.0)
-==221582==    by 0x4EEFFCF: opal_hwloc_base_get_topology (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==
-==221582== 231 bytes in 12 blocks are definitely lost in loss record 51 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x4C4B50E: strdup (strdup.c:42)
-==221582==    by 0x92484B3: ???
-==221582==    by 0x924885C: ???
-==221582==    by 0x9248BD7: ???
-==221582==    by 0x9239AAC: ???
-==221582==    by 0x4EE79C8: mca_btl_base_select (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x7389527: ???
-==221582==    by 0x492070A: mca_bml_base_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4960714: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 910 (400 direct, 510 indirect) bytes in 1 blocks are definitely lost in loss record 53 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x73C4F41: ???
-==221582==    by 0x73EC274: ???
-==221582==    by 0x73C9C0E: ???
-==221582==    by 0x6FB4465: ???
-==221582==    by 0x5099020: ??? (in /usr/lib/x86_64-linux-gnu/libhwloc.so.15.1.0)
-==221582==    by 0x508C478: ??? (in /usr/lib/x86_64-linux-gnu/libhwloc.so.15.1.0)
-==221582==    by 0x4EEFFCF: opal_hwloc_base_get_topology (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x4E14E54: orte_ess_base_proc_binding (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==    by 0x559FEF2: ???
-==221582==    by 0x4E4B2FB: orte_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-rte.so.40.20.3)
-==221582==    by 0x4960322: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==
-==221582== 1,344 bytes in 1 blocks are definitely lost in loss record 56 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x4E99702: opal_free_list_grow_st (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x9239D2D: ???
-==221582==    by 0x4EE79C8: mca_btl_base_select (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x7389527: ???
-==221582==    by 0x492070A: mca_bml_base_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4960714: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 2,752 bytes in 1 blocks are definitely lost in loss record 57 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x4E99702: opal_free_list_grow_st (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x9239C50: ???
-==221582==    by 0x4EE79C8: mca_btl_base_select (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x7389527: ???
-==221582==    by 0x492070A: mca_bml_base_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4960714: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== 2,752 bytes in 1 blocks are definitely lost in loss record 58 of 58
-==221582==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==221582==    by 0x4E99702: opal_free_list_grow_st (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x9239CC4: ???
-==221582==    by 0x4EE79C8: mca_btl_base_select (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3)
-==221582==    by 0x7389527: ???
-==221582==    by 0x492070A: mca_bml_base_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4960714: ompi_mpi_init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x4904072: PMPI_Init (in /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3)
-==221582==    by 0x11562E: main (in /home/dorival/01-Code/cpp/test-openmpi-valgrind/build/project)
-==221582==
-==221582== LEAK SUMMARY:
-==221582==    definitely lost: 8,209 bytes in 36 blocks
-==221582==    indirectly lost: 599 bytes in 20 blocks
-==221582==      possibly lost: 0 bytes in 0 blocks
-==221582==    still reachable: 2,935 bytes in 15 blocks
-==221582==         suppressed: 0 bytes in 0 blocks
-==221582== Reachable blocks (those to which a pointer was found) are not shown.
-==221582== To see them, rerun with: --leak-check=full --show-leak-kinds=all
-==221582==
-==221582== For lists of detected and suppressed errors, rerun with: -s
-==221582== ERROR SUMMARY: 25 errors from 25 contexts (suppressed: 0 from 0)
 ```
