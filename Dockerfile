@@ -35,8 +35,8 @@ RUN echo $'#include <mpi.h> \n\
   MPI_Init(&argc, &argv);\n\
   MPI_Finalize();\n\
   return 0;\n\
-  }\n' > /tmp/main.cpp
-RUN mpicc -o /tmp/mytest /tmp/main.cpp
+  }\n' > /tmp/main.c
+RUN mpicc -o /tmp/mytest /tmp/main.c
 RUN echo "valgrind --leak-check=full mpirun --allow-run-as-root -np 1 /tmp/mytest" > /tmp/test.bash
 
 # command
