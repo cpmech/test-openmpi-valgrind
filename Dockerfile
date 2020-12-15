@@ -5,6 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-c"]
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
   ca-certificates \
+  openssh-server \
   git \
   g++ \
   make \
@@ -29,12 +30,12 @@ ENV PATH="/usr/local/bin:${PATH}"
 
 # prepare test
 RUN echo $'#include <mpi.h> \n\
-int main(int argc, char **argv)\n\
-{\n\
+  int main(int argc, char **argv)\n\
+  {\n\
   MPI_Init(&argc, &argv);\n\
   MPI_Finalize();\n\
   return 0;\n\
-}\n' > /tmp/main.cpp
+  }\n' > /tmp/main.cpp
 RUN mpicc -o /tmp/mytest /tmp/main.cpp
 RUN echo "valgrind --leak-check=full mpirun --allow-run-as-root -np 1 /tmp/mytest" > /tmp/test.bash
 
